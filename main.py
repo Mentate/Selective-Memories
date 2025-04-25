@@ -3,7 +3,9 @@ import pygame
 import constants
 from windows import (
     SmallAppWindow,
-    LargeAppWindow
+    LargeAppWindow,
+    FileAppWindow,
+    OsBar
 )
 
 # pygame setup
@@ -13,16 +15,18 @@ pygame.display.set_caption("Selective Memories")
 clock = pygame.time.Clock()
 running = True
 
-lg_window = LargeAppWindow(0, 0)
+#lg_window = LargeAppWindow(0, 0)
+file_window = FileAppWindow(0,0)
 sm_window1 = SmallAppWindow(735, 0)
 sm_window2 = SmallAppWindow(735, 372)
-
+os_window = OsBar(0,737)
 
 
 while running:
-    lg_window.draw(screen)
+    file_window.draw(screen)
     sm_window1.draw(screen)
     sm_window2.draw(screen)
+    os_window.draw(screen)
 
     # poll for events
     # pygame.QUIT event means the user clicked X to close your window
