@@ -2,10 +2,7 @@
 import pygame
 import constants
 from windows import (
-    SmallAppWindow,
-    LargeAppWindow,
-    FileAppWindow,
-    OsBar
+    ClickableAsset
 )
 
 # pygame setup
@@ -15,18 +12,20 @@ pygame.display.set_caption("Selective Memories")
 clock = pygame.time.Clock()
 running = True
 
-#lg_window = LargeAppWindow(0, 0)
-file_window = FileAppWindow(0,0)
-sm_window1 = SmallAppWindow(735, 0)
-sm_window2 = SmallAppWindow(735, 372)
-os_window = OsBar(0,737)
+
+active_assets = {
+    "file_window":ClickableAsset("assets/byte_navigator.png",0,0),
+    "chat_wndow":ClickableAsset("assets/chat_window.png",735, 0),
+    "recovery_window":ClickableAsset("assets/recovery_window.png", 735, 372),
+    "taskbar":ClickableAsset("assets/bar.png", 0,737),
+    "tbar_fldr":ClickableAsset("assets/folder_icon.png",100,737)
+}
+
 
 
 while running:
-    file_window.draw(screen)
-    sm_window1.draw(screen)
-    sm_window2.draw(screen)
-    os_window.draw(screen)
+    for asset in active_assets:
+        active_assets[asset].draw(screen)
 
     # poll for events
     # pygame.QUIT event means the user clicked X to close your window
@@ -34,15 +33,17 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-    # fill the screen with a color to wipe away anything from last frame
-    # screen.fill("purple")
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            # left_click = pygame.mouse.get_pressed()[0]
+            # middle_click = pygame.mouse.get_pressed()[1]
+            # right_click = pygame.mouse.get_pressed()[2]
+            x, y = pygame.mouse.get_pos()
+            for asset in active_assets:
+                if active_assets[asset].clicked(event):
+                    print(f"{asset} was clicked")
 
-    # RENDER YOUR GAME HERE
 
-    # flip() the display to put your work on screen
     pygame.display.flip()
-    
-
-    clock.tick(60)  # limits FPS to 60
+    clock.tick(30)  # limits FPS to 60
 
 pygame.quit()
