@@ -1,13 +1,23 @@
 # Example file showing a basic pygame "game loop"
 import pygame
 import constants
+import json
 from windows import (
     ClickableAsset,
     AssetGroup
 )
 
+# fake file system json
+fs_structure = {}
+with open("fs.json") as fle:
+    fs_structure = json.loads(fle.read())
+
+print(fs_structure)
+
 # pygame setup
 pygame.init()
+pygame.font.init()
+
 screen = pygame.display.set_mode((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT))
 pygame.display.set_caption("Selective Memories")
 clock = pygame.time.Clock()
@@ -15,8 +25,39 @@ running = True
 
 
 # handlers here at the top, may move to another module at some point
-def test_handler1(event):
-    print("handler 1 worked")
+def dir_render(name,asset_data, event):
+    #first clean the screen
+    file_window.sub_assets = {}
+    folders = fs_structure[name]["folders"]
+    files = fs_structure[name]["files"]
+    position = (100,100)
+    for folder_name in folders:
+        x = position[0]
+        y = position[1]
+        icon = ClickableAsset(asset_path="assets/folder_icon_lg.png", handler = dir_render)
+        icon_text = ClickableAsset(text=folder_name,handler = dir_render)
+        file_window.add_asset(folder_name,icon,True, position)
+        file_window.add_asset(folder_name + "_text",icon_text,True, position)
+        if x < 500:
+            x = x + 75
+            position = (x,y)
+        else:
+            x = 100
+            y = y + 25
+            position = (x,y)
+    for file_name in folders:
+        x = position[0]
+        y = position[1]
+        temp = ClickableAsset(asset_path="assets/file_icon.png", handler = dir_render)
+        file_window.add_asset(file_name,temp,True, position)
+        if x < 500:
+            x = x + 75
+            position = (x,y)
+        else:
+            x = 100
+            y = y + 25
+            position = (x,y)
+
 
 def min_file_win(name, asset_data, event):
     if file_window.visible == True:
@@ -28,10 +69,10 @@ def min_file_win(name, asset_data, event):
 
 
 # create the primary assets for our asset groups
-osbar_background = ClickableAsset("assets/bar.png", (0,737),test_handler1)
-chat_window_background = ClickableAsset("assets/chat_window.png",(735, 0),test_handler1)
-recovery_window_background = ClickableAsset("assets/recovery_window.png", (735,372), test_handler1)
-file_window_background = ClickableAsset("assets/byte_navigator.png",(0,0),test_handler1)
+osbar_background = ClickableAsset(asset_path = "assets/bar.png", loc = (0,737))
+chat_window_background = ClickableAsset(asset_path ="assets/chat_window.png", loc = (735, 0))
+recovery_window_background = ClickableAsset(asset_path ="assets/recovery_window.png", loc = (735,372))
+file_window_background = ClickableAsset(asset_path ="assets/byte_navigator.png",loc = (0,0))
 
 # start building our asset groups
 osbar = AssetGroup(osbar_background)
@@ -40,8 +81,10 @@ recovery_window = AssetGroup(recovery_window_background)
 file_window = AssetGroup(file_window_background)
 
 # add child assets to the groups
-osbar_fldr = ClickableAsset("assets/folder_icon.png",(0,0),min_file_win)
+root_fldr = ClickableAsset(asset_path ="assets/folder_icon_lg.png", handler = dir_render)
+osbar_fldr = ClickableAsset(asset_path ="assets/folder_icon.png", handler = min_file_win)
 osbar.add_asset("folder",osbar_fldr,True,(90,0))
+file_window.add_asset("root",root_fldr,True, (100,100))
 
 # add them to a dict
 asset_groups = {

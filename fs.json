@@ -1,0 +1,24 @@
+{
+    "root":{
+        "files":["test1.txt","test2.doc"],
+        "folders":["fld1a","fld1b"],
+        "parent":"root"
+    },
+    "fld1a":{
+        "files":["cool.txt","personal.txt","hacks.txt"],
+        "folders":["fld2a"],
+        "parent":"root"
+    },
+    "fld1b":{
+        "files":["me.jpg","kristen.jpg","christmas99.jpg"],
+        "folders":["fld2b","fld2c"],
+        "parent":"root"
+    },
+    "fld2a":{
+        "files":["track01.mdi"],
+        "folders":[],
+        "parent":"fld1a"
+    }
+
+
+}

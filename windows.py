@@ -3,18 +3,23 @@ import constants
 
 
 class ClickableAsset:
-    def __init__(self,asset_path:str,loc:tuple,handler):
-        self.bg_image = pygame.image.load(asset_path).convert()
+    def __init__(self,text = None,asset_path=None, loc=(0,0),handler=None):
+        my_font = pygame.font.SysFont('Comic Sans MS', 30)
+        if asset_path:
+            self.surf = pygame.image.load(asset_path).convert_alpha()
+        elif text:
+            self.surf = my_font.render(text, False, (0, 0, 0))
+
         self.x = loc[0]
         self.y = loc[1]
         self.handler = handler
 
 
     def draw(self,screen):
-        size = self.bg_image.get_size()
+        size = self.surf.get_size()
         self.rect = pygame.Rect(self.x, self.y, size[0], size[1])
         self.rect.topleft = (self.x, self.y)
-        screen.blit(self.bg_image, (self.x,self.y))
+        screen.blit(self.surf, (self.x,self.y))
 
     def clicked(self,event):
         return self.rect.collidepoint(event.pos)
@@ -30,9 +35,7 @@ class AssetGroup:
         for asset_name in self.sub_assets:
             asset_data = self.sub_assets[asset_name]
             asset_obj = asset_data["asset_obj"]
-            if asset_data["visible"] == True:
-                result = asset_obj.clicked(event)
-                if result == True:
+            if asset_data["visible"] == True and asset_obj.clicked(event) and asset_obj.handler:
                     asset_obj.handler(asset_name, asset_data, event) # call the handler
                     return asset_name
 
